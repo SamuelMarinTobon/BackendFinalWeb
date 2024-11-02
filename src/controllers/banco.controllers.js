@@ -1,4 +1,3 @@
-import { query } from 'express';
 import { getConnection } from '../database/database.js';
 //parte logica y manejar la base de datos
 
