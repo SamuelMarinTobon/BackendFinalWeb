@@ -1,6 +1,7 @@
 import { getConnection } from '../database/database.js';
 
 const loginUser = async (req, res) => {
+  console.log(req.body);
   try {
     const { email, password } = req.body;
     const connection = await getConnection();
