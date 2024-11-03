@@ -31,7 +31,7 @@ const verPrestamos = async (req, res) => {
     const connection = await getConnection();
 
     const consultarPrestamos = `
-    SELECT id, monto, plazo, cuota_mensual, estado, fecha_solicitud 
+    SELECT prestamo_id, monto, plazo, cuota_mensual, estado, fecha_solicitud 
       FROM prestamos 
       WHERE numero_cuenta = '${numeroCuenta}' AND estado = 'aprobado'`;
     const [resultado] = await connection.query(consultarPrestamos);
@@ -56,7 +56,7 @@ const pagarPrestamo = async (req, res) => {
     }
 
     const consultaPrestamo = `SELECT monto, cuota_mensual FROM prestamos 
-    WHERE id = '${idPrestamo}' AND estado = 'aprobado'`;
+    WHERE prestamo_id = '${idPrestamo}' AND estado = 'aprobado'`;
     const [resultadoPrestamo] = await connection.query(consultaPrestamo);
 
     if (!resultadoPrestamo.length) {
@@ -85,13 +85,13 @@ const pagarPrestamo = async (req, res) => {
   VALUES ('${numeroCuenta}', 'pago prestamo', ${montoApagar}, NOW())`;
     await connection.query(registrarTransaccion);
 
-    const nuevoMonto = totalDeuda - monto;
+    const nuevoMonto = resultadoPrestamo[0].monto - montoApagar;
 
     if (nuevoMonto <= 0) {
-      await connection.query(`UPDATE prestamos SET estado = 'cancelado', monto = 0 WHERE id = '${idPrestamo}'`);
+      await connection.query(`UPDATE prestamos SET estado = 'cancelado', monto = 0 WHERE prestamo_id = '${idPrestamo}'`);
     } else {
       await connection.query(
-        `UPDATE prestamos SET monto = ${nuevoMonto} WHERE id = '${idPrestamo}' AND estado = 'aprobado'`
+        `UPDATE prestamos SET monto = ${nuevoMonto} WHERE prestamo_id = '${idPrestamo}' AND estado = 'aprobado'`
       );
     }
 
