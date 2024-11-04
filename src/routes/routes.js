@@ -29,4 +29,12 @@ router.post('/balance', cors({ origin: 'http://localhost:5173' }), metodosTransa
 
 
 
+//Retiro
+router.post('/retirar', cors({ origin: 'http://localhost:5173' }), metodosRetiro.retirarDinero);
+
+//Depósito
+router.post('/depositar', cors({ origin: 'http://localhost:5173' }), metodosDeposito.depositarDinero);
+
+//Histórico de Ingresos
+router.post('/historico_ingresos', cors({ origin: 'http://localhost:5173' }), metodosHistorico.obtenerHistoricoIngresos);
 export default router;
