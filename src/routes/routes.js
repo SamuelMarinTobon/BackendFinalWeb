@@ -21,4 +21,13 @@ router.post('/transferir', cors({ origin: 'http://localhost:5173' }), metodosTra
 router.post('/solicitar_prestamo', cors({ origin: 'http://localhost:5173' }), metodosPrestamos.solicitarPrestamo);
 router.post('/ver_prestamos', cors({ origin: 'http://localhost:5173' }), metodosPrestamos.verPrestamos);
 router.post('/pagar_prestamo', cors({ origin: 'http://localhost:5173' }), metodosPrestamos.pagarPrestamo);
+
+//Retiro
+router.post('/retirar', cors({ origin: 'http://localhost:5173' }), metodosRetiro.retirarDinero);
+
+//Depósito
+router.post('/depositar', cors({ origin: 'http://localhost:5173' }), metodosDeposito.depositarDinero);
+
+//Histórico de Ingresos
+router.post('/historico_ingresos', cors({ origin: 'http://localhost:5173' }), metodosHistorico.obtenerHistoricoIngresos);
 export default router;
