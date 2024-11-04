@@ -5,6 +5,9 @@ import { metodosPrestamos } from '../controllers/prestamos.js';
 import { metodosUsuario } from '../controllers/usuarios.js';
 import { metodosTrasferencias } from '../controllers/transferencias.js';
 import { metodosTransacciones } from '../controllers/transacciones.js';
+import { metodosRetiro } from '../controllers/retiros.js';
+import { metodosDeposito } from '../controllers/depositar.js';
+import { metodosHistorico } from '../controllers/historico-ingresos.js';
 
 
 const router = Router();
@@ -17,6 +20,10 @@ router.post('/registro', cors({ origin: 'http://localhost:5173' }), metodosUsuar
 
 //transferencias
 router.post('/transferir', cors({ origin: 'http://localhost:5173' }), metodosTrasferencias.transferir);
+//Retiro
+router.post('/retirar', cors({ origin: 'http://localhost:5173' }), metodosRetiro.retirarDinero);
+//Depósito
+router.post('/depositar', cors({ origin: 'http://localhost:5173' }), metodosDeposito.depositarDinero);
 
 //prestamos
 router.post('/solicitar_prestamo', cors({ origin: 'http://localhost:5173' }), metodosPrestamos.solicitarPrestamo);
@@ -26,14 +33,6 @@ router.post('/pagar_prestamo', cors({ origin: 'http://localhost:5173' }), metodo
 //transacciones
 router.post('/movimientos', cors({ origin: 'http://localhost:5173' }), metodosTransacciones.obtenerMovimientos);
 router.post('/balance', cors({ origin: 'http://localhost:5173' }), metodosTransacciones.verMovimientos);
-
-
-
-//Retiro
-router.post('/retirar', cors({ origin: 'http://localhost:5173' }), metodosRetiro.retirarDinero);
-
-//Depósito
-router.post('/depositar', cors({ origin: 'http://localhost:5173' }), metodosDeposito.depositarDinero);
 
 //Histórico de Ingresos
 router.post('/historico_ingresos', cors({ origin: 'http://localhost:5173' }), metodosHistorico.obtenerHistoricoIngresos);
