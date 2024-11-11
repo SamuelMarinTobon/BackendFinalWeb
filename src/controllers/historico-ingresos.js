@@ -1,4 +1,4 @@
-import { getConnection } from '../database/database.js';
+/*import { getConnection } from '../database/database.js';
 
 const obtenerHistoricoIngresos = async (req, res) => {
   try {
@@ -21,4 +21,4 @@ const obtenerHistoricoIngresos = async (req, res) => {
 
 export const metodosHistorico = {
   obtenerHistoricoIngresos,
-};
+};*/
