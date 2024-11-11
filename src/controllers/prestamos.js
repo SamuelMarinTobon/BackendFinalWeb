@@ -31,7 +31,7 @@ const verPrestamos = async (req, res) => {
     const connection = await getConnection();
 
     const consultarPrestamos = `
-    SELECT prestamo_id, monto, plazo, cuota_mensual, estado, fecha_solicitud 
+    SELECT prestamo_id, monto,monto_inicial,plazo, cuota_mensual, estado, fecha_solicitud 
       FROM prestamos 
       WHERE numero_cuenta = '${numeroCuenta}' AND estado = 'aprobado'`;
     const [resultado] = await connection.query(consultarPrestamos);
@@ -47,11 +47,14 @@ const pagarPrestamo = async (req, res) => {
   try {
     const { idPrestamo, numeroCuenta, tipoPago } = req.body;
     const connection = await getConnection();
+    
+
 
     const consultaSaldo = `SELECT saldo FROM usuarios WHERE numero_cuenta = '${numeroCuenta}'`;
     const [resultadoSaldo] = await connection.query(consultaSaldo);
 
-    if (resultadoSaldo[0].saldo <= 0) {
+    
+    if (parseFloat(resultadoSaldo[0].saldo) <= 0) {
       return res.json({ success: false, message: 'Saldo insuficiente' });
     }
 
@@ -62,24 +65,23 @@ const pagarPrestamo = async (req, res) => {
     if (!resultadoPrestamo.length) {
       return res.json({ success: false, message: 'el prestamo no exixte o ya fue cancelado' });
     }
-    
-    const cuotaMensual=resultadoPrestamo[0].cuota_mensual;
+
+    const cuotaMensual = resultadoPrestamo[0].cuota_mensual;
 
     let montoApagar;
 
-    if(tipoPago=='total'){
+    if (tipoPago == 'total') {
       montoApagar = resultadoPrestamo[0].monto;
-    } else{
+    } else {
       montoApagar = cuotaMensual;
     }
 
-    if (resultadoSaldo[0].saldo < montoApagar) {
+    if (parseFloat(resultadoSaldo[0].saldo) < parseFloat(montoApagar)) {
       return res.json({ success: false, message: 'Saldo insuficiente' });
     }
 
     const actualizarSaldo = `UPDATE usuarios SET saldo = saldo - ${montoApagar} WHERE numero_cuenta = '${numeroCuenta}'`;
     await connection.query(actualizarSaldo);
-
 
     const registrarTransaccion = `INSERT INTO transacciones (numero_cuenta, tipo, monto, fecha) 
   VALUES ('${numeroCuenta}', 'pago prestamo', ${montoApagar}, NOW())`;
@@ -88,7 +90,9 @@ const pagarPrestamo = async (req, res) => {
     const nuevoMonto = resultadoPrestamo[0].monto - montoApagar;
 
     if (nuevoMonto <= 0) {
-      await connection.query(`UPDATE prestamos SET estado = 'cancelado', monto = 0 WHERE prestamo_id = '${idPrestamo}'`);
+      await connection.query(
+        `UPDATE prestamos SET estado = 'cancelado', monto = 0 WHERE prestamo_id = '${idPrestamo}'`
+      );
     } else {
       await connection.query(
         `UPDATE prestamos SET monto = ${nuevoMonto} WHERE prestamo_id = '${idPrestamo}' AND estado = 'aprobado'`
